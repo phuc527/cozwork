@@ -1,5 +1,5 @@
 import { Button } from "@doar/components";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState, useCallback } from "react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Share, Trash, X, Edit } from "react-feather";
 import ModalDelete from "src/components/apps/contacts/main/modal-delete";
@@ -21,8 +21,8 @@ import {
 const Main: FC = () => {
     const [leadCheck, setLeadCheck] = useState<number[]>([]);
     // create memory leadCheck
-    const [memoryLeadCheck, setMemoryLeadCheck] = useState<number[]>([]);
-    let { memoryCheckedItem } = useAppSelector((store) => store.contact.lead);
+    // const [memoryLeadCheck, setMemoryLeadCheck] = useState<number[]>([]);
+    // const { memoryCheckedItem } = useAppSelector((store) => store.contact.lead);
     const {
         stage,
         idLocation,
@@ -87,16 +87,10 @@ const Main: FC = () => {
         setLeadCheck([]);
     };
 
-    const onselectLead = (array: number[]) => {
-        const tempNewArray =
-            array.length > 0 ? array.filter((i) => i !== undefined) : [];
+    const onselectLead = useCallback((array: number[]) => {
+        const tempNewArray = array.filter((i) => i !== undefined);
         setLeadCheck(tempNewArray);
-        setMemoryLeadCheck(tempNewArray);
-
-        memoryCheckedItem = memoryLeadCheck;
-    };
-
-    console.log(memoryCheckedItem);
+    }, []);
 
     const [showDelete, setShowDelete] = useState(false);
     const handleModalDelete = () => {
@@ -257,10 +251,7 @@ const Main: FC = () => {
                                 </>
                             )}
                         </StyledButton>
-                        <PersonalDetails
-                            onSelect={onselectLead}
-                            onReset={onReset}
-                        />
+                        <PersonalDetails onSelect={onselectLead} />
                     </>
                 ) : (
                     <>
@@ -279,7 +270,6 @@ const Main: FC = () => {
                         </StyledButton>
                         <PersonalDetails
                             onSelect={onselectLead}
-                            onReset={onReset}
                             className="noCheck"
                         />
                     </>

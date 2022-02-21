@@ -22,7 +22,7 @@ export interface ContactLeadsState {
     loading: boolean;
     receivingAllLeads: boolean;
     // create new array checked item
-    memoryCheckedItem: number[] | null;
+    listLeadIds: number[];
     pagination: Pagination;
 }
 
@@ -34,7 +34,7 @@ const initialState: ContactLeadsState = {
     allLeads: null,
     checkAllContactPage: null,
     // create new array to store checked item
-    memoryCheckedItem: null,
+    listLeadIds: [],
     loading: false,
     pagination: {
         total: 0,
@@ -113,6 +113,30 @@ const detailContactLeadSlice = createSlice({
         doGetCheckAllPage(state, action: PayloadAction<CheckAllContactsPage>) {
             state.checkAllContactPage = action.payload;
         },
+        // update memory checked item
+        doUpdateMemoryCheckedItem(
+            state,
+            action: PayloadAction<{ arrayMemomyChecked: number[] }>
+        ) {
+            let result: number[] = [];
+            const num = state.listLeadIds.concat(
+                action.payload.arrayMemomyChecked
+            );
+            result = num.filter((item) => {
+                return result.includes(item) ? false : result.push(item);
+            });
+            state.listLeadIds = result;
+        },
+
+        // delete checked item
+        doDeleteMemoryCheckedItem(
+            state,
+            action: PayloadAction<{ id: number }>
+        ) {
+            state.listLeadIds = state.listLeadIds?.filter(
+                (i) => i !== action.payload.id
+            );
+        },
     },
 });
 
@@ -129,6 +153,8 @@ export const {
     doGetLeadFail,
     doGetLeadSuccess,
     doGetCheckAllPage,
+    doUpdateMemoryCheckedItem,
+    doDeleteMemoryCheckedItem,
 } = detailContactLeadSlice.actions;
 
 export default detailContactLeadSlice.reducer;

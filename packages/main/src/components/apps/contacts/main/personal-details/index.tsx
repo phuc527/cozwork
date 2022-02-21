@@ -11,6 +11,8 @@ import {
     doGetLeads,
     doGetAllLeads,
     doGetCheckAllPage,
+    doUpdateMemoryCheckedItem,
+    doDeleteMemoryCheckedItem,
 } from "src/redux/slices/contacts/lead";
 import { Lead } from "src/types/api/ticket";
 import { CSSTransition } from "react-transition-group";
@@ -146,19 +148,19 @@ export const HandleCheckBox: FC<Props> = ({
 };
 interface IProps {
     onSelect: (array: number[]) => void;
-    onReset: () => void;
     className?: string;
 }
 
-const PersonalDetails: FC<IProps> = ({ className, onSelect, onReset }) => {
+const PersonalDetails: FC<IProps> = ({ className, onSelect }) => {
     const dispatch = useAppDispatch();
     const [defaultLead, setDefaultLead] = useState<Lead[] | []>([]);
     const [isCheckedContact, setCheckedContact] = useState<boolean[]>([]);
+    const [leadIds, setLeadIds] = useState<number[]>([]);
     const [isCheckedAllContacts, setCheckedAllContacts] = useState(false);
     const [isChecked, setChecked] = useState<boolean[]>([]);
     const [isCheckedAllPage, setCheckedAllPage] = useState(false);
 
-    const { loading, pagination, leads } = useAppSelector(
+    const { loading, pagination, leads, listLeadIds } = useAppSelector(
         (store) => store.contact.lead
     );
     const {
@@ -181,8 +183,51 @@ const PersonalDetails: FC<IProps> = ({ className, onSelect, onReset }) => {
             })
         );
     }, [dispatch]);
+    // const onFirstPage = () => {
+    //     setCheckedAllPage(false);
+    //     dispatch(
+    //         doGetLeads({
+    //             limit: pagination.limit,
+    //             page: 1,
+    //             keyword: inputValue || null,
+    //             location_id: idLocation || 0,
+    //             stage: stage || null,
+    //             procedure_id: idProcedure || 0,
+    //             staff_id: idStaff || 0,
+    //             created_from: createdFrom,
+    //             created_to: createdTo,
+    //             source: source || null,
+    //         })
+    //     );
+    //     dispatch(
+    //         doUpdateMemoryCheckedItem({
+    //             arrayMemomyChecked: leadIds,
+    //         })
+    //     );
+    // };
+    // const onLastPage = () => {
+    //     setCheckedAllPage(false);
+    //     dispatch(
+    //         doGetLeads({
+    //             limit: pagination.limit,
+    //             page: Math.round(pagination.total / pagination.limit),
+    //             keyword: inputValue || null,
+    //             location_id: idLocation || 0,
+    //             stage: stage || null,
+    //             procedure_id: idProcedure || 0,
+    //             staff_id: idStaff || 0,
+    //             created_from: createdFrom,
+    //             created_to: createdTo,
+    //             source: source || null,
+    //         })
+    //     );
+    //     dispatch(
+    //         doUpdateMemoryCheckedItem({
+    //             arrayMemomyChecked: leadIds,
+    //         })
+    //     );
+    // };
     const onNextPage = () => {
-        onReset();
         setCheckedAllPage(false);
 
         dispatch(
@@ -199,9 +244,13 @@ const PersonalDetails: FC<IProps> = ({ className, onSelect, onReset }) => {
                 source: source || null,
             })
         );
+        dispatch(
+            doUpdateMemoryCheckedItem({
+                arrayMemomyChecked: leadIds,
+            })
+        );
     };
     const onPrevPage = () => {
-        onReset();
         setCheckedAllPage(false);
         dispatch(
             doGetLeads({
@@ -217,15 +266,33 @@ const PersonalDetails: FC<IProps> = ({ className, onSelect, onReset }) => {
                 source: source || null,
             })
         );
+        dispatch(
+            doUpdateMemoryCheckedItem({
+                arrayMemomyChecked: leadIds,
+            })
+        );
     };
 
     useEffect(() => {
         if (leads) {
             const newLeads: Lead[] | null = leads;
-            setChecked(newLeads.map(() => false));
+            const checked: boolean[] = [];
+            let count = 0;
+            leads.forEach((value) => {
+                if (listLeadIds?.includes(value.id)) {
+                    checked.push(true);
+                    count += 1;
+                } else {
+                    checked.push(false);
+                }
+            });
+            if (count === 25) {
+                setCheckedAllPage(true);
+            }
+            setChecked(checked);
             setDefaultLead(newLeads);
         }
-    }, [leads]);
+    }, [leads, listLeadIds]);
 
     const afterSelectPage = (array: boolean[]) => {
         const selectedLeads: number[] = [];
@@ -235,8 +302,33 @@ const PersonalDetails: FC<IProps> = ({ className, onSelect, onReset }) => {
                 selectedLeads.push(defaultLead ? defaultLead[index]?.id : 0);
             }
         });
-        onSelect(selectedLeads);
+        const num = selectedLeads.concat(listLeadIds);
+        let result: number[] = [];
+        result = num.filter((element) => {
+            return result.includes(element) ? "" : result.push(element);
+        });
+        setLeadIds(result);
+        onSelect(result);
     };
+    useEffect(() => {
+        if (listLeadIds) {
+            const checked: boolean[] = [];
+            let count = 0;
+            defaultLead.forEach((value) => {
+                if (listLeadIds.includes(value.id)) {
+                    checked.push(true);
+                    count += 1;
+                } else {
+                    checked.push(false);
+                }
+            });
+            if (count === 25) {
+                setCheckedAllPage(true);
+            }
+            setChecked(checked);
+            onSelect(listLeadIds);
+        }
+    }, [listLeadIds, defaultLead, onSelect]);
 
     const afterSelectContacts = (array: boolean[], allLeads?: Lead[]) => {
         const selectedLeads: number[] = [];
@@ -245,17 +337,43 @@ const PersonalDetails: FC<IProps> = ({ className, onSelect, onReset }) => {
                 selectedLeads.push(allLeads ? allLeads[index]?.id : 0);
             }
         });
+        setLeadIds(selectedLeads);
         onSelect(selectedLeads);
     };
 
     const onSelectLeads = (index: number) => {
         const tempArr = [...isChecked];
+        let count = 0;
+        const leadId = defaultLead[index].id;
         tempArr[index] = !isChecked[index];
         setChecked(tempArr);
 
         const isHasUnChecked = tempArr.find((i) => !i);
         if (isHasUnChecked === false) {
             setCheckedAllPage(false);
+        }
+        tempArr.forEach((i) => {
+            if (i) {
+                count += 1;
+            }
+        });
+
+        if (count === 25) {
+            setCheckedAllPage(true);
+        }
+
+        if (isChecked[index]) {
+            dispatch(
+                doDeleteMemoryCheckedItem({
+                    id: leadId,
+                })
+            );
+        } else {
+            dispatch(
+                doUpdateMemoryCheckedItem({
+                    arrayMemomyChecked: [leadId],
+                })
+            );
         }
         afterSelectPage(tempArr);
     };
@@ -529,6 +647,8 @@ const PersonalDetails: FC<IProps> = ({ className, onSelect, onReset }) => {
                                             pagination={pagination}
                                             onNext={onNextPage}
                                             onPrev={onPrevPage}
+                                            // onFirst={onFirstPage}
+                                            // onLast={onLastPage}
                                         />
                                     </>
                                 ) : (
