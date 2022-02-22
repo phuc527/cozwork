@@ -1,6 +1,7 @@
 import { Spinner } from "@doar/components";
 import { debounce } from "lodash-es";
 import { FC, useEffect, useMemo, useState } from "react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { toastError, toastSuccess } from "src/utils/toast";
 /* Helpers */
 import { formatMetric } from "src/helpers/stringHelpers";
@@ -12,6 +13,7 @@ import { Procedure } from "src/types/api/authentication";
 import {
     doGetProcedures,
     doUpdateProcedure,
+    // doUpdateProcedureStaffDetail,
 } from "src/redux/slices/settings/services/procedure";
 import SearchForm from "../search-form";
 /* Styles */
@@ -29,9 +31,10 @@ import Pagination from "../../../pagination";
 import Switch from "../../../manage-users/staff-details/staff-info/switch-button";
 
 interface IPropsTable {
-    staffProcedure?: Procedure[] | null;
+    // staffProcedure?: Procedure[] | null;
+    idStaff?: number | null;
 }
-const UserProcedureTable: FC<IPropsTable> = ({ staffProcedure }) => {
+const UserProcedureTable: FC<IPropsTable> = ({ idStaff }) => {
     const dispatch = useAppDispatch();
     const { pagination, loading, procedures } = useAppSelector(
         (store) => store.setting.services.procedure
@@ -43,34 +46,41 @@ const UserProcedureTable: FC<IPropsTable> = ({ staffProcedure }) => {
     >([]);
 
     useEffect(() => {
-        if (staffProcedure) {
-            setFilteredProcedures(staffProcedure);
+        if (idStaff) {
             dispatch(
                 doGetProcedures({
                     page: 1,
                     limit: 10,
+                    staff_id: idStaff,
                 })
             );
         }
-    }, [staffProcedure, dispatch]);
+    }, [idStaff, dispatch]);
 
     useEffect(() => {
         if (procedures) {
             const newProcedures: Procedure[] | null = procedures;
             setFilteredProcedures(newProcedures);
+
+            // setConsult(
+            //     procedures.map((i) => {
+            //         if (i.consult) return true;
+            //         return false;
+            //     })
+            // );
         }
     }, [procedures]);
 
     useEffect(() => {
-        if (staffProcedure) {
+        if (procedures) {
             setConsult(
-                staffProcedure.map((i) => {
+                procedures.map((i) => {
                     if (i.consult) return true;
                     return false;
                 })
             );
         }
-    }, [staffProcedure]);
+    }, [procedures]);
 
     const handleSearch = useMemo(
         () =>
@@ -80,11 +90,12 @@ const UserProcedureTable: FC<IPropsTable> = ({ staffProcedure }) => {
                         doGetProcedures({
                             limit: pagination.limit,
                             ...(name && { name }),
+                            ...(idStaff && { staff_id: idStaff }),
                         })
                     ),
                 500
             ),
-        [dispatch, pagination.limit]
+        [dispatch, pagination.limit, idStaff]
     );
 
     const onSearch = (name: string) => {
@@ -191,6 +202,7 @@ const UserProcedureTable: FC<IPropsTable> = ({ staffProcedure }) => {
                                     limit: pagination.limit,
                                     page: Number(pagination.currentPage) + 1,
                                     ...(searchValue && { name: searchValue }),
+                                    ...(idStaff && { staff_id: idStaff }),
                                 })
                             )
                         }
@@ -200,6 +212,7 @@ const UserProcedureTable: FC<IPropsTable> = ({ staffProcedure }) => {
                                     limit: pagination.limit,
                                     page: Number(pagination.currentPage) - 1,
                                     ...(searchValue && { name: searchValue }),
+                                    ...(idStaff && { staff_id: idStaff }),
                                 })
                             )
                         }

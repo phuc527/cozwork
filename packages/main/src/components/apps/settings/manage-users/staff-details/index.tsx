@@ -8,16 +8,15 @@ import Title from "../../title";
 import StaffInfo from "./staff-info";
 import { StyledBackArrow, StyledWrap } from "./style";
 
-
 const StaffDetails: FC = () => {
     const dispatch = useAppDispatch();
-    const { staff } = useAppSelector(store => ({
-        staff: store.setting.manage_users.activeStaffs.staff
+    const { staff } = useAppSelector((store) => ({
+        staff: store.setting.manage_users.activeStaffs.staff,
     }));
 
     const onBack = () => {
         dispatch(doSetStaff(null));
-    }
+    };
     return (
         <StyledWrap>
             <Container>
@@ -34,15 +33,14 @@ const StaffDetails: FC = () => {
                     </Col>
                     <Col col xs={12} sm={12} md={12} lg={12} xl={6.5}>
                         <UserProcedureTable
-                            staffProcedure={staff?.procedures}
+                            // staffProcedure={staff?.procedures}
+                            idStaff={staff?.id}
                         />
                     </Col>
                 </Row>
             </Container>
         </StyledWrap>
-
-
-    )
-}
+    );
+};
 
 export default StaffDetails;
