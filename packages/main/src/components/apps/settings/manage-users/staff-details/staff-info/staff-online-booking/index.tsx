@@ -15,24 +15,27 @@ const StaffOnlineBooking: FC<IProps> = ({ id, isOnlineBooking }) => {
 
     useEffect(() => {
         setValue(isOnlineBooking);
-    }, [isOnlineBooking])
+    }, [isOnlineBooking]);
 
     const onSave = (state: boolean) => {
         setValue(state);
-        dispatch(doUpdateStaff({
-            id,
-            form: {
-                online_booking: state
-            },
-            onSuccess: () => toastSuccess("Online Booking updated successfully"),
-            onFail: (error) => toastError(error)
-        }))
-    }
+        dispatch(
+            doUpdateStaff({
+                id,
+                form: {
+                    online_booking: state,
+                },
+                onSuccess: () =>
+                    toastSuccess("Online Booking updated successfully"),
+                onFail: (error) => toastError(error),
+            })
+        );
+    };
 
     return (
         <div>
             <StyledLabel>Allow Online Booking</StyledLabel>
-            <StyledInfoWrap className='disabledCursor'>
+            <StyledInfoWrap className="disabledCursor">
                 <Switch
                     state={value ? "on" : "off"}
                     onSwitch={(state) => onSave(state)}
@@ -41,7 +44,7 @@ const StaffOnlineBooking: FC<IProps> = ({ id, isOnlineBooking }) => {
                 />
             </StyledInfoWrap>
         </div>
-    )
-}
+    );
+};
 
 export default StaffOnlineBooking;

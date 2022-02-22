@@ -1,70 +1,141 @@
 // import { Button } from "@doar/components";
-import { Button } from "@doar/components";
 import { FC, useEffect, useState } from "react";
 import { INotification } from "src/types/api/notifications";
 import Title from "../../title";
 import { SETTING } from "../constants";
-import { StyledCard, StyledCardBody, StyledLabel, StyledLabelCheckBox, StyledText } from "../style";
+import {
+    StyledCard,
+    StyledCardBody,
+    StyledLabel,
+    StyledLabelCheckBox,
+    StyledText,
+} from "../style";
 import { StyledPlanInfo, StyledLabelCheck, StyledTitleWrap } from "./style";
+import Switch from "../switch-button/index";
 
 interface IProps {
     newLeadNotification?: INotification | null;
     consultRequestEmail?: INotification | null;
     qualification?: INotification | null;
     question?: INotification | null;
-    onChangeNotification: (name: string, on: boolean, email: boolean, sms: boolean) => void;
+    onChangeNotification: (
+        name: string,
+        on: boolean,
+        email: boolean,
+        sms: boolean
+    ) => void;
 }
 const PracticeNotifications: FC<IProps> = ({
     newLeadNotification,
     consultRequestEmail,
     qualification,
     question,
-    onChangeNotification
+    onChangeNotification,
 }) => {
     const [onStateNewLead, setOnStateNewLead] = useState(false);
     const [onStateConsultRequest, setOnStateConsultRequest] = useState(false);
     const [onStateQualification, setOnStateQualification] = useState(false);
     const [onStateQuestion, setOnStateQuestion] = useState(false);
 
-    const toggleNewLead = () => {
-        setOnStateNewLead(o => !o)
-        const NewLeadNotificationSms = newLeadNotification?.sms ? newLeadNotification?.sms : false
-        const NewLeadNotificationEmail = newLeadNotification?.email ? newLeadNotification?.email : false
-        onChangeNotification(SETTING.new_lead, !onStateNewLead, NewLeadNotificationEmail, NewLeadNotificationSms)
-    };
-    const toggleConsultRequest = () => {
-        setOnStateConsultRequest(o => !o)
-        const ConsultRequestSms = consultRequestEmail?.sms ? consultRequestEmail?.sms : false
-        const ConsultRequestEmail = consultRequestEmail?.email ? consultRequestEmail?.email : false
-        onChangeNotification(SETTING.consult_request, !onStateConsultRequest, ConsultRequestEmail, ConsultRequestSms)
-    };
-    const toggleQualification = () => {
-        setOnStateQualification(o => !o)
-        const QualificationSms = qualification?.sms ? qualification?.sms : false
-        const QualificationEmail = qualification?.email ? qualification?.email : false
-        onChangeNotification(SETTING.qualification, !onStateQualification, QualificationEmail, QualificationSms)
-    };
-    const toggleQuestion = () => {
-        setOnStateQuestion(o => !o)
-        const QuestionSms = question?.sms ? question?.sms : false
-        const QuestionEmail = question?.email ? question?.email : false
-        onChangeNotification(SETTING.question, !onStateQuestion, QuestionEmail, QuestionSms)
-    };
+    // const toggleNewLead = () => {
+    //     setOnStateNewLead(o => !o)
+    //     const NewLeadNotificationSms = newLeadNotification?.sms ? newLeadNotification?.sms : false
+    //     const NewLeadNotificationEmail = newLeadNotification?.email ? newLeadNotification?.email : false
+    //     onChangeNotification(SETTING.new_lead, !onStateNewLead, NewLeadNotificationEmail, NewLeadNotificationSms)
+    // };
+    // const toggleConsultRequest = () => {
+    //     setOnStateConsultRequest(o => !o)
+    //     const ConsultRequestSms = consultRequestEmail?.sms ? consultRequestEmail?.sms : false
+    //     const ConsultRequestEmail = consultRequestEmail?.email ? consultRequestEmail?.email : false
+    //     onChangeNotification(SETTING.consult_request, !onStateConsultRequest, ConsultRequestEmail, ConsultRequestSms)
+    // };
+    // const toggleQualification = () => {
+    //     setOnStateQualification(o => !o)
+    //     const QualificationSms = qualification?.sms ? qualification?.sms : false
+    //     const QualificationEmail = qualification?.email ? qualification?.email : false
+    //     onChangeNotification(SETTING.qualification, !onStateQualification, QualificationEmail, QualificationSms)
+    // };
+    // const toggleQuestion = () => {
+    //     setOnStateQuestion(o => !o)
+    //     const QuestionSms = question?.sms ? question?.sms : false
+    //     const QuestionEmail = question?.email ? question?.email : false
+    //     onChangeNotification(SETTING.question, !onStateQuestion, QuestionEmail, QuestionSms)
+    // };
 
     useEffect(() => {
         if (newLeadNotification) {
-            setOnStateNewLead(newLeadNotification?.on)
+            setOnStateNewLead(newLeadNotification?.on);
         }
         if (consultRequestEmail) {
-            setOnStateConsultRequest(consultRequestEmail?.on)
+            setOnStateConsultRequest(consultRequestEmail?.on);
         }
         if (qualification) {
-            setOnStateQualification(qualification?.on)
+            setOnStateQualification(qualification?.on);
         }
         if (question) {
-            setOnStateQuestion(question?.on)
+            setOnStateQuestion(question?.on);
         }
-    }, [newLeadNotification, consultRequestEmail, qualification, question])
+    }, [newLeadNotification, consultRequestEmail, qualification, question]);
+
+    const onSaveStateNewLead = (state: boolean) => {
+        setOnStateNewLead(!state);
+        const NewLeadNotificationSms = newLeadNotification?.sms
+            ? newLeadNotification?.sms
+            : false;
+        const NewLeadNotificationEmail = newLeadNotification?.email
+            ? newLeadNotification?.email
+            : false;
+        onChangeNotification(
+            SETTING.new_lead,
+            !onStateNewLead,
+            NewLeadNotificationEmail,
+            NewLeadNotificationSms
+        );
+    };
+
+    const onSaveStateConsultRequest = (state: boolean) => {
+        setOnStateConsultRequest(!state);
+        const ConsultRequestSms = consultRequestEmail?.sms
+            ? consultRequestEmail?.sms
+            : false;
+        const ConsultRequestEmail = consultRequestEmail?.email
+            ? consultRequestEmail?.email
+            : false;
+        onChangeNotification(
+            SETTING.consult_request,
+            !onStateConsultRequest,
+            ConsultRequestEmail,
+            ConsultRequestSms
+        );
+    };
+
+    const onSaveStateQualification = (state: boolean) => {
+        setOnStateQualification(!state);
+        const QualificationSms = qualification?.sms
+            ? qualification?.sms
+            : false;
+        const QualificationEmail = qualification?.email
+            ? qualification?.email
+            : false;
+        onChangeNotification(
+            SETTING.qualification,
+            !onStateQualification,
+            QualificationEmail,
+            QualificationSms
+        );
+    };
+
+    const onSaveStateQuestion = (state: boolean) => {
+        setOnStateQuestion(!state);
+        const QuestionSms = question?.sms ? question?.sms : false;
+        const QuestionEmail = question?.email ? question?.email : false;
+        onChangeNotification(
+            SETTING.question,
+            !onStateQuestion,
+            QuestionEmail,
+            QuestionSms
+        );
+    };
 
     return (
         <>
@@ -74,52 +145,92 @@ const PracticeNotifications: FC<IProps> = ({
             <StyledCard>
                 <StyledCardBody>
                     <StyledLabel>New Lead Notifications</StyledLabel>
-                    <StyledPlanInfo>Send me an email when i get anew lead</StyledPlanInfo>
+                    <StyledPlanInfo>
+                        Send me an email when i get anew lead
+                    </StyledPlanInfo>
                     <StyledLabelCheck>
-                        <StyledLabelCheckBox >
-                            <Button className={onStateNewLead ? 'on' : 'off'} onClick={() => toggleNewLead()} color='light' borderRadius='25px' height='25px' width='60px'>
+                        <StyledLabelCheckBox>
+                            {/* <Button className={onStateNewLead ? 'on' : 'off'} onClick={() => toggleNewLead()} color='light' borderRadius='25px' height='25px' width='60px'>
                                 <span className="pin" />
-                            </Button>
+                            </Button> */}
+                            <Switch
+                                state={onStateNewLead ? "on" : "off"}
+                                onSwitch={(state: boolean) =>
+                                    onSaveStateNewLead(state)
+                                }
+                                width={60}
+                                height={30}
+                            />
                             <StyledText>Enable Notification </StyledText>
                         </StyledLabelCheckBox>
-                    </StyledLabelCheck >
+                    </StyledLabelCheck>
 
                     <StyledLabel>Consult Request Email</StyledLabel>
-                    <StyledPlanInfo>Send me an email when a client requests a consult</StyledPlanInfo>
+                    <StyledPlanInfo>
+                        Send me an email when a client requests a consult
+                    </StyledPlanInfo>
                     <StyledLabelCheck>
-                        <StyledLabelCheckBox >
-                            <Button className={onStateConsultRequest ? 'on' : 'off'} onClick={() => toggleConsultRequest()} color='light' borderRadius='25px' height='25px' width='60px'>
+                        <StyledLabelCheckBox>
+                            {/* <Button className={onStateConsultRequest ? 'on' : 'off'} onClick={() => toggleConsultRequest()} color='light' borderRadius='25px' height='25px' width='60px'>
                                 <span className="pin" />
-                            </Button>
+                            </Button> */}
+                            <Switch
+                                state={onStateConsultRequest ? "on" : "off"}
+                                onSwitch={(state: boolean) =>
+                                    onSaveStateConsultRequest(state)
+                                }
+                                width={60}
+                                height={30}
+                            />
                             <StyledText>Enable Notification </StyledText>
                         </StyledLabelCheckBox>
-                    </StyledLabelCheck >
+                    </StyledLabelCheck>
 
                     <StyledLabel>Qualification</StyledLabel>
-                    <StyledPlanInfo>Send me an email when a qualification</StyledPlanInfo>
+                    <StyledPlanInfo>
+                        Send me an email when a qualification
+                    </StyledPlanInfo>
                     <StyledLabelCheck>
-                        <StyledLabelCheckBox >
-                            <Button className={onStateQualification ? 'on' : 'off'} onClick={() => toggleQualification()} color='light' borderRadius='25px' height='25px' width='60px'>
+                        <StyledLabelCheckBox>
+                            {/* <Button className={onStateQualification ? 'on' : 'off'} onClick={() => toggleQualification()} color='light' borderRadius='25px' height='25px' width='60px'>
                                 <span className="pin" />
-                            </Button>
+                            </Button> */}
+                            <Switch
+                                state={onStateQualification ? "on" : "off"}
+                                onSwitch={(state: boolean) =>
+                                    onSaveStateQualification(state)
+                                }
+                                width={60}
+                                height={30}
+                            />
                             <StyledText>Enable Notification </StyledText>
                         </StyledLabelCheckBox>
-                    </StyledLabelCheck >
+                    </StyledLabelCheck>
 
                     <StyledLabel>Question</StyledLabel>
-                    <StyledPlanInfo>Send me an email when a question</StyledPlanInfo>
+                    <StyledPlanInfo>
+                        Send me an email when a question
+                    </StyledPlanInfo>
                     <StyledLabelCheck>
-                        <StyledLabelCheckBox >
-                            <Button className={onStateQuestion ? 'on' : 'off'} onClick={() => toggleQuestion()} color='light' borderRadius='25px' height='25px' width='60px'>
+                        <StyledLabelCheckBox>
+                            {/* <Button className={onStateQuestion ? 'on' : 'off'} onClick={() => toggleQuestion()} color='light' borderRadius='25px' height='25px' width='60px'>
                                 <span className="pin" />
-                            </Button>
+                            </Button> */}
+                            <Switch
+                                state={onStateQuestion ? "on" : "off"}
+                                onSwitch={(state: boolean) =>
+                                    onSaveStateQuestion(state)
+                                }
+                                width={60}
+                                height={30}
+                            />
                             <StyledText>Enable Notification </StyledText>
                         </StyledLabelCheckBox>
-                    </StyledLabelCheck >
+                    </StyledLabelCheck>
                 </StyledCardBody>
             </StyledCard>
         </>
-    )
-}
+    );
+};
 
 export default PracticeNotifications;
