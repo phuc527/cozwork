@@ -115,6 +115,17 @@ const procedureSlices = createSlice({
                 state.loading = true;
             }
         },
+        // doUpdateProcedureStaffDetail(
+        //     state,
+        //     action: PayloadAction<{
+        //         id: number;
+        //         form: FormUpdateProcedure;
+        //         onSuccess: () => void;
+        //         onFail: (error: string) => void;
+        //     }>
+        // ) {
+        //     state.loading = false;
+        // },
         doUpdateProcedureSuccess(state, action: PayloadAction<Procedure>) {
             state.loading = false;
             state.procedure = action.payload;
@@ -226,6 +237,7 @@ const procedureSlices = createSlice({
         doCreateProcedureAddonFail(state) {
             state.loading = false;
         },
+        // them cho nay
         doUpdateProceduresOrder(
             state,
             action: PayloadAction<{
@@ -293,6 +305,7 @@ export const {
     doGetProceduresFail,
     doGetProceduresSuccess,
     doUpdateProcedure,
+    // doUpdateProcedureStaffDetail,
     doUpdateProcedureFail,
     doUpdateProcedureSuccess,
     doSetProcedure,

@@ -24,6 +24,7 @@ import {
     doGetProceduresFail,
     doGetProceduresSuccess,
     doUpdateProcedure,
+    // doUpdateProcedureStaffDetail,
     doUpdateProcedureAddon,
     doUpdateProcedureAddonFail,
     doUpdateProcedureAddons,
@@ -66,6 +67,24 @@ function* createProcedureSaga(action: ReturnType<typeof doCreateProcedure>) {
     }
 }
 
+// function* updateProcedureStaffDetailSaga(
+//     action: ReturnType<typeof doUpdateProcedureStaffDetail>
+// ) {
+//     try {
+//         yield* call(updateProcedureApi, action.payload.id, action.payload.form);
+
+//         yield* call(action.payload.onSuccess);
+//     } catch (err) {
+//         yield* put(doUpdateProcedureFail());
+
+//         const errors = JSON.parse(JSON.stringify(err));
+//         yield* call(
+//             action.payload.onFail,
+//             errors?.data?.errors || "There was an issue when updating procedure"
+//         );
+//     }
+// }
+
 function* updateProcedureSaga(action: ReturnType<typeof doUpdateProcedure>) {
     try {
         const response = yield* call(
@@ -73,8 +92,9 @@ function* updateProcedureSaga(action: ReturnType<typeof doUpdateProcedure>) {
             action.payload.id,
             action.payload.form
         );
-
-        yield* put(doUpdateProcedureSuccess(response));
+        if (action.payload.form.consult === null) {
+            yield* put(doUpdateProcedureSuccess(response));
+        }
 
         yield* call(action.payload.onSuccess);
     } catch (err) {
@@ -251,6 +271,10 @@ export function* procedureSaga(): Generator {
     yield all([
         takeLatest(doGetProcedures, getProceduresSaga),
         takeLatest(doUpdateProcedure, updateProcedureSaga),
+        // takeLatest(
+        //     doUpdateProcedureStaffDetail,
+        //     updateProcedureStaffDetailSaga
+        // ),
         takeLatest(doCreateProcedure, createProcedureSaga),
         takeEvery(doDeleteProcedure, deleteProcedureSaga),
         takeEvery(doUpdateProcedureAddon, updateProcedureAddonSaga),

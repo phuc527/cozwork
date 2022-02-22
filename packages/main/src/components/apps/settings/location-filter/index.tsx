@@ -42,7 +42,6 @@ const LocationFilter: FC<IProps> = ({
     idStaff,
     onSelectLocation,
 }) => {
-    console.log(selectedStaffLocation);
     const dispatch = useAppDispatch();
     const { locations, loading, location } = useAppSelector(
         (store) => store?.setting?.practice?.location

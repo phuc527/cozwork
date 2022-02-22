@@ -7,6 +7,7 @@ export interface GetProceduresParams {
     category_id?: number;
     page?: number;
     limit?: number;
+    staff_id?: number;
 }
 interface FormAddProcedure {
     name: string;
